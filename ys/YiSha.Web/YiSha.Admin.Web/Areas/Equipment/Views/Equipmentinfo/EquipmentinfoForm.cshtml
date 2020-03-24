@@ -1,0 +1,164 @@
+﻿@{
+    Layout = "~/Views/Shared/_FormWhite.cshtml";
+}
+
+<div class="wrapper animated fadeInRight">
+    <form id="form" class="form-horizontal m">
+        <div class="form-group">
+            <label class="col-sm-3 control-label ">设备编号<font class="red"> *</font></label>
+            <div class="col-sm-8">
+                <input id="emnumber" col="Emnumber" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label ">设备名称</label>
+            <div class="col-sm-8">
+                <input id="emname" col="Emname" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label ">规格型号</label>
+            <div class="col-sm-8">
+                <input id="emtype" col="Emtype" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label ">计量单位</label>
+            <div class="col-sm-8">
+                <input id="unit" col="Unit" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label ">数量</label>
+            <div class="col-sm-8">
+                <input id="emamount" col="Emamount" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label ">设备参数</label>
+            <div class="col-sm-8">
+                <input id="emparameter" col="Emparameter" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label ">安装位置</label>
+            <div class="col-sm-8">
+                <input id="emlocation" col="Emlocation" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label ">所属设备</label>
+            <div class="col-sm-8">
+                <input id="emsuperior" col="Emsuperior" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label ">所属系统</label>
+            <div class="col-sm-8">
+                <input id="emsystem" col="Emsystem" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label ">设备状态</label>
+            <div class="col-sm-8">
+                <input id="emstatus" col="Emstatus" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label ">设备类型</label>
+            <div class="col-sm-8">
+                <input id="emkind" col="Emkind" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label ">设备标识</label>
+            <div class="col-sm-8">
+                <input id="emidentification" col="Emidentification" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label ">生产厂家</label>
+            <div class="col-sm-8">
+                <input id="emmanufacturers" col="Emmanufacturers" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label ">出厂时间</label>
+            <div class="col-sm-8">
+                <input id="emdeliverytime" col="Emdeliverytime" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label ">出厂编号</label>
+            <div class="col-sm-8">
+                <input id="emmanufacturingnumber" col="Emmanufacturingnumber" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label ">安装时间</label>
+            <div class="col-sm-8">
+                <input id="eminstalltime" col="Eminstalltime" type="text" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label ">所属部门</label>
+            <div class="col-sm-8">
+                <input id="emdepartment" col="emdepartment" type="text" class="form-control" />
+            </div>
+        </div>    
+    </form>
+</div>
+
+<script type="text/javascript">
+    var id = ys.request("id");
+    $(function () {
+        getForm();
+
+        $('#form').validate({
+            rules: {
+                emnumber: { required: true }
+            }
+        });
+    });
+
+    function getForm() {
+        if (id > 0) {
+            ys.ajax({
+                url: '@Url.Content("~/Equipment/Equipmentinfo/GetFormJson")' + '?id=' + id,
+                type: 'get',
+                success: function (obj) {
+                    if (obj.Tag == 1) {
+                        $('#form').setWebControls(obj.Result);
+                    }
+                }
+            });
+        }
+        else {
+            var defaultData = {};
+            $('#form').setWebControls(defaultData);
+        }
+    }
+
+
+    function saveForm(index) {
+        if ($('#form').validate().form()) {
+            var postData = $('#form').getWebControls({ Id: id });
+            ys.ajax({
+                url: '@Url.Content("~/Equipment/Equipmentinfo/SaveFormJson")',
+                type: 'post',
+                data: postData,
+                success: function (obj) {
+                    if (obj.Tag == 1) {
+                        ys.msgSuccess(obj.Message);
+                        parent.searchGrid();
+                        parent.layer.close(index);
+                    }
+                    else {
+                        ys.msgError(obj.Message);
+                    }
+                }
+            });
+        }
+    }
+</script>
+
